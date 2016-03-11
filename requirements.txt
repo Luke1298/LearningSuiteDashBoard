@@ -1,0 +1,5 @@
+beautifulsoup4==4.4.1
+bs4==0.0.1
+Django==1.9.4
+mechanize==0.2.5
+selenium==2.52.0
