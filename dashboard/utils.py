@@ -4,6 +4,7 @@ import mechanize
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import time
+
 def make_class_list(netid, password):
     br = mechanize.Browser()
     br.open("https://cas.byu.edu/cas/login?service=https%3A%2F%2Flearningsuite.byu.edu")
@@ -16,7 +17,7 @@ def make_class_list(netid, password):
 
     # follow second link with element text matching regular expression
     br.select_form(nr = 0)
-    br.form['username'] = username
+    br.form['username'] = netid
     br.form['password'] = password
     br.submit()
     soup = BeautifulSoup(br.response().read())
@@ -50,19 +51,19 @@ def make_class_list(netid, password):
         grade_scale = {}
         num_intervals = len(entries)/2
         for x in range(num_intervals):
-            grade_scale[entries[(x*2)].text] = entries[(x*2)+1].text
+            grade_scale[str(entries[(x*2)].text)] = str(entries[(x*2)+1].text)
         if len(grade_scale) == 0:
-            grade_scale = {'A':'93%', 'A-':'90%', 'B+':'87%', 'B':'83%', 'B-':'80%', 'C+':'77%', 'C':'73%', 'C-':'70%', 'D+':'67%', 'D':'63%', 'D-':'60%', 'E':'0%'}
+            grade_scale = {"A":"93%", "A-":"90%", "B+":"87%", "B":"83%", "B-":"80%", "C+":"77%", "C":"73%", "C-":"70%", "D+":"67%", "D":"63%", "D-":"60%", "E":"0%"}
         classes[_class] = {'class_code':class_code.replace(" ", ""), 'course_title':course_title, 'cid':cid, 'grade_scale':grade_scale}
 
-    browser = webdriver.PhantomJS(executable_path="./phantomjs")
+    browser = webdriver.PhantomJS(executable_path="phantomjs")
     for index in classes:
         """The following is really slow.... So instead I believe the solution is to store time of sync and warn them of last sync"""
         cid = classes[index]['cid']
         browser.get("https://learningsuite.byu.edu/."+code+"/"+cid+"/student/gradebook")
         if 'login' in browser.current_url:
             username_input = browser.find_element_by_name('username')
-            username_input.send_keys(username)
+            username_input.send_keys(netid)
 
             password_input = browser.find_element_by_name('password')
             password_input.send_keys(password)
@@ -79,3 +80,35 @@ def make_class_list(netid, password):
         classes[index]['grade'] = grade
     for x in classes:
         Classes.objects.create(course_code=classes[x]['class_code'], course_grade=classes[x]['grade'], course_title=classes[x]['course_title'], cid=classes[x]['cid'], grade_scale=str(classes[x]['grade_scale']))
+
+def could_sign_in(netid, password):
+    br = mechanize.Browser()
+    br.open("https://cas.byu.edu/cas/login?service=https%3A%2F%2Flearningsuite.byu.edu")
+    br.addheaders = [ ( 'User-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) Gecko/2008071615 Fedora/3.0.1-1.fc9 Firefox/3.0.1' ) ]
+
+    class WhatTheHellJustHappened:
+        pass
+    class UglyRaceCaseCondition:
+        pass
+
+    # follow second link with element text matching regular expression
+    br.select_form(nr = 0)
+    br.form['username'] = netid
+    br.form['password'] = password
+    br.submit()
+    soup = BeautifulSoup(br.response().read())
+    script = soup.find_all('script')[-1]
+    location_href = script.text.strip().splitlines()[-1]
+    #print location_href
+    code = location_href.split('.')
+    code = code[-1][:-2]
+    #print code
+    into_learning_suite = br.open("https://learningsuite.byu.edu/."+code+"/student/top").read()
+    learning_suite_soup = BeautifulSoup(into_learning_suite)
+    print
+    print
+    print
+    print learning_suite_soup.title.text
+    print
+    print
+    return learning_suite_soup.title.text=="BYU Learning Suite"

@@ -1,0 +1,56 @@
+
+body{
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background: #eee;
+}
+
+.chart rect {
+  stroke: #eee;
+  fill: steelblue;
+}
+
+.chart {
+  background: #eee;
+  margin: 5px;
+}
+
+.grades {
+  width: 100%;
+}
+
+.grades .green{
+  fill: #77DD77;
+}
+
+.grades .blue{
+  fill: #779ECB;
+}
+
+.grades .yellow{
+  fill: #FDFD96;
+}
+
+.grades .red{
+  fill: #FF6961;
+}
+
+.grade-key .green{
+  fill: #77DD77;
+}
+
+.grade-key .blue{
+  fill: #779ECB;
+}
+
+.grade-key .yellow{
+  fill: #FDFD96;
+}
+
+.grade-key .red{
+  fill: #FF6961;
+}
+
+.course-code{
+  cursor: pointer;
+}
