@@ -56,7 +56,7 @@ def make_class_list(netid, password):
             grade_scale = {"A":"93%", "A-":"90%", "B+":"87%", "B":"83%", "B-":"80%", "C+":"77%", "C":"73%", "C-":"70%", "D+":"67%", "D":"63%", "D-":"60%", "E":"0%"}
         classes[_class] = {'class_code':class_code.replace(" ", ""), 'course_title':course_title, 'cid':cid, 'grade_scale':grade_scale}
 
-    browser = webdriver.PhantomJS(executable_path="phantomjs")
+    browser = webdriver.PhantomJS()
     for index in classes:
         """The following is really slow.... So instead I believe the solution is to store time of sync and warn them of last sync"""
         cid = classes[index]['cid']

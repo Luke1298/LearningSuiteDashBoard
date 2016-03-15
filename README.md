@@ -11,4 +11,6 @@ pip install -r requirements.txt
 
 ./manage.py runserver
 
+npm install -g phantomjs
+
 Go to 127.0.0.1:8000
